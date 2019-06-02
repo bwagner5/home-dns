@@ -1,7 +1,7 @@
-FROM ubuntu:18.04
+FROM centos:7
 
-RUN apt-get update -y && apt-get install -y unbound
+RUN yum update -y && yum install -y unbound
 
 ADD home-dns-unbound.conf /etc/unbound/unbound.conf
 
-ENTRYPOINT ["/usr/sbin/unbound", "-d"]
+ENTRYPOINT ["/usr/sbin/unbound"]

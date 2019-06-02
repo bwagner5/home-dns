@@ -7,4 +7,4 @@ home-dns makes it easy to setup your own super fast DNS forwarder with caching, 
 
 ## How to Run:
 
-docker run -p 5353:53/tcp -p 5353:53/udp -d homedns
+sudo docker run --network host -d homedns
