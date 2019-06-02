@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -x
+
+SERVICE_PATH=/etc/systemd/system/docker.dns.service
+
+rm -f $SERVICE_PATH
+
+cat << EOF > $SERVICE_PATH
+[Unit]
+Description=DNS Service
+After=docker.service
+Requires=docker.service
+After=docker.dns.service
+Requires=docker.dns.service
+ 
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker stop brandonwagner/home-dns
+ExecStartPre=-/usr/bin/docker rm brandonwagner/home-dns
+ExecStartPre=/usr/bin/docker pull brandonwagner/home-dns
+ExecStart=/usr/bin/docker run --network host --name home-dns --rm brandonwagner/home-dns
+ 
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl start docker.dns
+
