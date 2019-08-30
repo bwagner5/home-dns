@@ -27,5 +27,6 @@ WantedBy=multi-user.target
 EOF
 
 systemctl daemon-reload
+systemctl enable docker.dns
 systemctl start docker.dns
 
