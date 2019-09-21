@@ -16,10 +16,11 @@ Requires=docker.dns.service
  
 [Service]
 TimeoutStartSec=0
+StartLimitIntervalSec=0
 Restart=always
 ExecStartPre=-/usr/bin/docker stop brandonwagner/home-dns
 ExecStartPre=-/usr/bin/docker rm brandonwagner/home-dns
-ExecStartPre=/usr/bin/docker pull brandonwagner/home-dns
+ExecStartPre=-/usr/bin/docker pull brandonwagner/home-dns
 ExecStart=/usr/bin/docker run --network host --name home-dns --rm brandonwagner/home-dns
  
 [Install]
