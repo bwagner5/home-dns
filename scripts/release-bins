@@ -1,0 +1,28 @@
+#!/bin/bash
+set -euo pipefail
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
+BIN="home-dns"
+
+cd ${SCRIPTPATH}/../
+
+GOOS=linux GOARCH=amd64 make build
+GOOS=linux GOARCH=arm64 make build
+GOOS=linux GOARM=6 GOARCH=arm make build
+GOOS=darwin GOARCH=amd64 make build
+
+
+cd ${SCRIPTPATH}/../build
+
+cp -f $BIN-linux-amd64 ds
+tar -zcvf $BIN-linux-amd64.tar.gz ds
+
+cp -f $BIN-linux-arm64 ds
+tar -zcvf $BIN-linux-arm64.tar.gz ds
+
+cp -f $BIN-linux-arm ds
+tar -zcvf $BIN-linux-arm.tar.gz ds
+
+cp -f $BIN-darwin-amd64 ds
+tar -zcvf $BIN-darwin-amd64.tar.gz ds
+
+rm -f $BIN
