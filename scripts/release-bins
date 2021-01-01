@@ -20,7 +20,7 @@ cp -f $BIN-linux-arm64 $BIN
 tar -zcvf $BIN-linux-arm64.tar.gz $BIN
 
 cp -f $BIN-linux-arm $BIN
-tar -zcvf $BIN-linux-arm.tar.gz $BIN
+tar -zcvf $BIN-linux-arm-6.tar.gz $BIN
 
 cp -f $BIN-darwin-amd64 $BIN
 tar -zcvf $BIN-darwin-amd64.tar.gz $BIN
