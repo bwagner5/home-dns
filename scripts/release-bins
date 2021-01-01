@@ -13,16 +13,16 @@ GOOS=darwin GOARCH=amd64 make build
 
 cd ${SCRIPTPATH}/../build
 
-cp -f $BIN-linux-amd64 ds
-tar -zcvf $BIN-linux-amd64.tar.gz ds
+cp -f $BIN-linux-amd64 $BIN
+tar -zcvf $BIN-linux-amd64.tar.gz $BIN
 
-cp -f $BIN-linux-arm64 ds
-tar -zcvf $BIN-linux-arm64.tar.gz ds
+cp -f $BIN-linux-arm64 $BIN
+tar -zcvf $BIN-linux-arm64.tar.gz $BIN
 
-cp -f $BIN-linux-arm ds
-tar -zcvf $BIN-linux-arm.tar.gz ds
+cp -f $BIN-linux-arm $BIN
+tar -zcvf $BIN-linux-arm.tar.gz $BIN
 
-cp -f $BIN-darwin-amd64 ds
-tar -zcvf $BIN-darwin-amd64.tar.gz ds
+cp -f $BIN-darwin-amd64 $BIN
+tar -zcvf $BIN-darwin-amd64.tar.gz $BIN
 
 rm -f $BIN

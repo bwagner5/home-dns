@@ -26,4 +26,7 @@ version:
 help:
 	@grep -E '^[a-zA-Z_-]+:.*$$' $(MAKEFILE_LIST) | sort
 
-.PHONY: all build test verify help
+clean:
+	rm -rf ${BUILD_DIR}/
+
+.PHONY: all build test verify help clean
