@@ -31,7 +31,7 @@ var (
 
 const (
 	adBlockListURL = "https://github.com/notracking/hosts-blocklists/raw/master/hostnames.txt"
-	adBlockFile    = "/etc/adservers.hosts"
+	adBlockFile    = "adservers.hosts"
 )
 
 var directives = []string{
@@ -193,10 +193,15 @@ var corefileContentsTemplate = `.:%d {
 	hosts %s {
 	   fallthrough
 	}
-	fanout . 127.0.0.1:5301 127.0.0.1:5302 127.0.0.1:5303 {
-	   except local
+	forward edu. 1.1.1.1 1.0.0.1 8.8.8.8 8.8.4.4 {
+
 	}
-	cancel
+	fanout . 1.1.1.1 1.0.0.1 { # 127.0.0.1:5301 127.0.0.1:5302 127.0.0.1:5303 127.0.0.1:5304 {
+	   except local
+	   attempt-count 0
+	   network udp
+	}
+	cancel 10s
 	errors
 	log
 	health
@@ -227,4 +232,13 @@ var corefileContentsTemplate = `.:%d {
 	   health_check 5s
 	}
  }
+
+ .:5304 {
+	bind 127.0.0.1
+        forward . 1.1.1.1 1.0.0.1 {
+           health_check 5s
+        }
+
+ }
+
 `
