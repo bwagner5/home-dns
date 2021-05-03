@@ -73,33 +73,44 @@ func main() {
 		os.Exit(0)
 	}
 
-	primedAdServers := make(chan bool)
-	go func() {
-		fmt.Fprintf(os.Stderr, "Starting adserver pull background job\n")
-		ticker := time.NewTicker(4 * time.Hour)
-		defer ticker.Stop()
-		for {
-			if err := retrieveAndWriteAdBlockHosts(adBlockListURL, adBlockFile); err != nil {
-				fmt.Fprintf(os.Stderr, err.Error())
-				continue
-			}
-			// First successful pull of the ad server block list file
-			primedAdServers <- true
-			// Run every 4 hours unless a failure occurs
-			<-ticker.C
-		}
-	}()
+	emptyFile, err := os.Create(adBlockFile)
+	if err != nil {
+		fmt.Println(err)
+                os.Exit(1)
+	}
+	emptyFile.Close()
 
-	// Wait for first ad server pull
-	<-primedAdServers
-	fmt.Fprintf(os.Stderr, "AdServer BlockList Primed! Starting the DNS servers now!\n")
+        if homedns.blockAds {
+		primedAdServers := make(chan bool)
+		go func() {
+			fmt.Fprintf(os.Stderr, "Starting adserver pull background job\n")
+			ticker := time.NewTicker(4 * time.Hour)
+			defer ticker.Stop()
+			for {
+				if err := retrieveAndWriteAdBlockHosts(adBlockListURL, adBlockFile); err != nil {
+					fmt.Fprintf(os.Stderr, err.Error())
+					continue
+				}
+				// First successful pull of the ad server block list file
+				primedAdServers <- true
+				// Run every 4 hours unless a failure occurs
+				<-ticker.C
+			}
+		}()
+
+		// Wait for first ad server pull
+		<-primedAdServers
+		fmt.Fprintf(os.Stderr, "AdServer BlockList Primed! Starting the DNS servers now!\n")
+        }
 
 	instance, err := caddy.Start(input)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, err.Error())
 		os.Exit(1)
 	}
-	fmt.Fprintf(os.Stderr, "Blocking Known AdServers!\n")
+        if homedns.blockAds {
+		fmt.Fprintf(os.Stderr, "Blocking Known AdServers!\n")
+        }
 	fmt.Fprintf(os.Stderr, "Sending Recursive Queries over TLS!\n")
 	fmt.Fprintf(os.Stderr, "Sending to Multiple Recursive Services: \n")
 	fmt.Fprintf(os.Stderr, "\t ✅ Google 8.8.8.8 8.8.4.4 \n")
@@ -110,6 +121,7 @@ func main() {
 
 type homedns struct {
 	printVersion bool
+        blockAds     bool
 	dryRun       bool
 	port         int
 }
@@ -119,6 +131,7 @@ func parseFlags() *homedns {
 	flags := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 	flags.BoolVar(&homedns.printVersion, "version", false, "Print Version")
 	flags.BoolVar(&homedns.dryRun, "dry-run", false, "Print generated corefile and exit")
+        flags.BoolVar(&homedns.blockAds, "block-ads", true, "Block Ads")
 	flags.IntVar(&homedns.port, "port", 53, "UDP Port to listen on")
 	flags.Usage = func() {
 		fmt.Fprintf(os.Stderr, "USAGE\n----\n%s [ options ]\n", os.Args[0])
