@@ -19,8 +19,9 @@ COPY . .
 RUN make build && mv build/home-dns-${GOOS}-${GOARCH} build/home-dns
 
 # Copy the binary into a scratch base image
+FROM amazonlinux:2 as amazonlinux
 FROM scratch
 WORKDIR /
+COPY --from=amazonlinux /etc/ssl/certs/ca-bundle.crt /etc/ssl/certs/
 COPY --from=builder /app/build/home-dns .
-USER 1000
-ENTRYPOINT ["/app/home-dns"]
+ENTRYPOINT ["/home-dns"]

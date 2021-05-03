@@ -31,7 +31,7 @@ var (
 
 const (
 	adBlockListURL = "https://github.com/notracking/hosts-blocklists/raw/master/hostnames.txt"
-	adBlockFile    = "adservers.hosts"
+	adBlockFile    = "/etc/adservers.hosts"
 )
 
 var directives = []string{
