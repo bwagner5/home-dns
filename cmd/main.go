@@ -193,13 +193,10 @@ var corefileContentsTemplate = `.:%d {
 	hosts %s {
 	   fallthrough
 	}
-	forward edu. 1.1.1.1 1.0.0.1 8.8.8.8 8.8.4.4 {
-
-	}
-	fanout . 1.1.1.1 1.0.0.1 { # 127.0.0.1:5301 127.0.0.1:5302 127.0.0.1:5303 127.0.0.1:5304 {
+	fanout . 127.0.0.1:5301 127.0.0.1:5302 127.0.0.1:5303 {
 	   except local
 	   attempt-count 0
-	   network udp
+	   network tcp
 	}
 	cancel 10s
 	errors
@@ -231,14 +228,6 @@ var corefileContentsTemplate = `.:%d {
 	   tls_servername dns.quad9.net
 	   health_check 5s
 	}
- }
-
- .:5304 {
-	bind 127.0.0.1
-        forward . 1.1.1.1 1.0.0.1 {
-           health_check 5s
-        }
-
  }
 
 `
